@@ -27,6 +27,6 @@ public class Registration {
     private String dateOfRegistration;
 
     @Column
-    private String registration;
+    private String version;
 
 }

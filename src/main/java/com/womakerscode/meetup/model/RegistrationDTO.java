@@ -19,8 +19,8 @@ public class RegistrationDTO {
     private String name;
 
     @NotEmpty
-    private String registration;
+    private String dateOfRegistration;
 
     @NotEmpty
-    private String dateOfRegistration;
+    private String version;
 }
