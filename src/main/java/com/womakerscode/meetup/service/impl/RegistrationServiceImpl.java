@@ -22,7 +22,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     public Registration save(Registration registration) {
-        if (repository.existByRegistration(registration.getVersion())){
+        if (repository.existByCpf(registration.getCpf())){
             throw new BusinessException("Registration already created");
         }
         return repository.save(registration);
@@ -63,8 +63,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public Optional<Registration> getRegistrationByVersion(String version) {
-        return repository.findByVersion(version);
+    public Optional<Registration> getRegistrationByCpf(String cpf) {
+        return repository.findByCpf(cpf);
     }
 
 }

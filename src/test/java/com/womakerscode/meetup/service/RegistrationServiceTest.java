@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -43,16 +44,17 @@ public class RegistrationServiceTest {
     @Test
     @DisplayName("Should save a registration")
     public void saveRegistration(){
+        LocalDate date = LocalDate.now();
         Registration registration = createValidRegistration();
 
-        Mockito.when(repository.existByRegistration(Mockito.anyString())).thenReturn(false);
+        Mockito.when(repository.existByCpf(Mockito.anyString())).thenReturn(false);
         Mockito.when(repository.save(registration)).thenReturn(createValidRegistration());
         Registration savedRegistration = registrationService.save(registration);
 
         assertThat(savedRegistration.getId()).isEqualTo(101);
         assertThat(savedRegistration.getName()).isEqualTo("Caroline");
-        assertThat(savedRegistration.getDateOfRegistration()).isEqualTo("01/04/2022");
-        assertThat(savedRegistration.getVersion()).isEqualTo("001");
+        assertThat(savedRegistration.getDateOfRegistration()).isEqualTo(date);
+        assertThat(savedRegistration.getCpf()).isEqualTo("12345678900");
     }
 
     @Test
@@ -60,7 +62,7 @@ public class RegistrationServiceTest {
     public void shouldNotSaveAsRegistrationDuplicated(){
 
         Registration registration = createValidRegistration();
-        Mockito.when(repository.existByRegistration(Mockito.any())).thenReturn(true);
+        Mockito.when(repository.existByCpf(Mockito.any())).thenReturn(true);
 
         Throwable exception = Assertions.catchThrowable(()-> registrationService.save(registration));
         assertThat(exception)
@@ -72,7 +74,7 @@ public class RegistrationServiceTest {
 
     @Test
     @DisplayName("Should get a registration by id")
-    public void getByRegistrationIdTest(){
+    public void getRegistrationById(){
 
         Integer id = 11;
         Registration registration = createValidRegistration();
@@ -85,12 +87,12 @@ public class RegistrationServiceTest {
         assertThat(foundRegistration.get().getId()).isEqualTo(id);
         assertThat(foundRegistration.get().getName()).isEqualTo(registration.getName());
         assertThat(foundRegistration.get().getDateOfRegistration()).isEqualTo(registration.getDateOfRegistration());
-        assertThat(foundRegistration.get().getVersion()).isEqualTo(registration.getVersion());
+        assertThat(foundRegistration.get().getCpf()).isEqualTo(registration.getCpf());
     }
 
     @Test
-    @DisplayName("Should return empty when get a registration by id when doesn't exists")
-    public void registrationNotFoundByIdTest(){
+    @DisplayName("Should return empty when get a registration by id and doesn't exists")
+    public void registrationNotFoundById(){
 
         Integer id = 11;
         Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
@@ -101,8 +103,8 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete a student")
-    public void deleteRegistrationTest(){
+    @DisplayName("Should delete a registration")
+    public void deleteRegistration(){
 
         Registration registration = Registration.builder().id(11).build();
 
@@ -126,18 +128,17 @@ public class RegistrationServiceTest {
         assertThat(registration.getId()).isEqualTo(updatedRegistration.getId());
         assertThat(registration.getName()).isEqualTo(updatedRegistration.getName());
         assertThat(registration.getDateOfRegistration()).isEqualTo(updatedRegistration.getDateOfRegistration());
-        assertThat(registration.getVersion()).isEqualTo(updatedRegistration.getVersion());
+        assertThat(registration.getCpf()).isEqualTo(updatedRegistration.getCpf());
     }
 
     @Test
     @DisplayName("Should filter registration must by properties")
-    public void findRegistrationTest(){
+    public void findRegistration(){
 
         Registration registration = createValidRegistration();
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Registration> listRegistration = Arrays.asList(registration);
-        Page<Registration> page =
-                new PageImpl<Registration>(listRegistration, PageRequest.of(0, 10),1);
+        Page<Registration> page = new PageImpl<>(listRegistration, PageRequest.of(0, 10),1);
 
         Mockito.when(repository.findAll(Mockito.any(Example.class), Mockito.any(PageRequest.class))).thenReturn(page);
         Page<Registration> result = registrationService.find(registration, pageRequest);
@@ -149,27 +150,27 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Should get a registration by version")
-    public void getRegistrationByVersion(){
+    @DisplayName("Should get a registration by cpf")
+    public void getRegistrationByCpf(){
 
-        String version = "010";
+        String cpf = "12345678900";
 
-        Mockito.when(repository.findByVersion(version))
-                .thenReturn(Optional.of(Registration.builder().id(11).version(version).build()));
-        Optional<Registration> registration = registrationService.getRegistrationByVersion(version);
+        Mockito.when(repository.findByCpf(cpf))
+                .thenReturn(Optional.of(Registration.builder().id(11).cpf(cpf).build()));
+        Optional<Registration> registration = registrationService.getRegistrationByCpf(cpf);
 
         assertThat(registration.isPresent()).isTrue();
         assertThat(registration.get().getId()).isEqualTo(11);
-        assertThat(registration.get().getVersion()).isEqualTo(version);
-        Mockito.verify(repository, Mockito.times(1)).findByVersion(version);
+        assertThat(registration.get().getCpf()).isEqualTo(cpf);
+        Mockito.verify(repository, Mockito.times(1)).findByCpf(cpf);
     }
 
     private Registration createValidRegistration() {
         return Registration.builder()
                 .id(101)
                 .name("Caroline")
-                .dateOfRegistration("01/04/2022")
-                .version("001")
+                .dateOfRegistration(LocalDate.now())
+                .cpf("12345678900")
                 .build();
     }
 }

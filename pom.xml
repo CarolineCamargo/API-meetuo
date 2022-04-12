@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.womakerscode.meetup</groupId>
-	<artifactId>Servico-de-agendamento-de-meetups</artifactId>
+	<artifactId>meetup-schedule-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Servico-de-agendamento-de-meetups</name>
+	<name>meetup-schedule-service</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -29,6 +29,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>

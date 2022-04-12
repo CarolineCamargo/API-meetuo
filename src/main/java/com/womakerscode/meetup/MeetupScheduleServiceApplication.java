@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ServicoDeAgendamentoDeMeetupsApplication {
+public class MeetupScheduleServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ServicoDeAgendamentoDeMeetupsApplication.class, args);
+		SpringApplication.run(MeetupScheduleServiceApplication.class, args);
 	}
 
 }

@@ -18,6 +18,6 @@ public interface RegistrationService {
 
     Page<Registration> find(Registration filter, PageRequest pageRequest);
 
-    Optional<Registration> getRegistrationByVersion(String version);
+    Optional<Registration> getRegistrationByCpf(String cpf);
 
 }

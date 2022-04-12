@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -19,8 +20,8 @@ public class RegistrationDTO {
     private String name;
 
     @NotEmpty
-    private String dateOfRegistration;
+    private LocalDate dateOfRegistration;
 
     @NotEmpty
-    private String version;
+    private String cpf;
 }
