@@ -1,12 +1,9 @@
 package com.womakerscode.meetup.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+
 
 @Data
 @AllArgsConstructor
@@ -14,14 +11,15 @@ import java.time.LocalDate;
 @Builder
 public class RegistrationDTO {
 
-    private Long id;
+    private Integer id;
 
     @NotEmpty
     private String name;
 
     @NotEmpty
-    private LocalDate dateOfRegistration;
+    private String dateOfRegistration;
 
     @NotEmpty
     private String cpf;
+
 }

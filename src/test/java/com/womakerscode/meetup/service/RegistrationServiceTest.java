@@ -11,14 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +41,6 @@ public class RegistrationServiceTest {
     @Test
     @DisplayName("Should save a registration")
     public void saveRegistration(){
-        LocalDate date = LocalDate.now();
         Registration registration = createValidRegistration();
 
         Mockito.when(repository.existByCpf(Mockito.anyString())).thenReturn(false);
@@ -53,7 +49,7 @@ public class RegistrationServiceTest {
 
         assertThat(savedRegistration.getId()).isEqualTo(101);
         assertThat(savedRegistration.getName()).isEqualTo("Caroline");
-        assertThat(savedRegistration.getDateOfRegistration()).isEqualTo(date);
+        assertThat(savedRegistration.getDateOfRegistration()).isEqualTo("01/04/2022");
         assertThat(savedRegistration.getCpf()).isEqualTo("12345678900");
     }
 
@@ -118,7 +114,7 @@ public class RegistrationServiceTest {
     public void updateRegistration(){
 
         Integer id = 11;
-        Registration updatingRegistration = Registration.builder().id(11).build();
+        Registration updatingRegistration = Registration.builder().id(id).build();
 
         Registration updatedRegistration = createValidRegistration();
         updatedRegistration.setId(id);
@@ -136,7 +132,7 @@ public class RegistrationServiceTest {
     public void findRegistration(){
 
         Registration registration = createValidRegistration();
-        PageRequest pageRequest = PageRequest.of(0, 10);
+        Pageable pageRequest = PageRequest.of(0, 10);
         List<Registration> listRegistration = Arrays.asList(registration);
         Page<Registration> page = new PageImpl<>(listRegistration, PageRequest.of(0, 10),1);
 
@@ -166,10 +162,11 @@ public class RegistrationServiceTest {
     }
 
     private Registration createValidRegistration() {
+
         return Registration.builder()
                 .id(101)
                 .name("Caroline")
-                .dateOfRegistration(LocalDate.now())
+                .dateOfRegistration("01/04/2022")
                 .cpf("12345678900")
                 .build();
     }

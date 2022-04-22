@@ -1,23 +1,18 @@
 package com.womakerscode.meetup.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
 public class Registration {
+
     @Id
-    @Column (name = "registration_id")
+    @Column
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -25,9 +20,8 @@ public class Registration {
     private String name;
 
     @Column (name = "date_of_registration")
-    private LocalDate dateOfRegistration;
+    private String dateOfRegistration;
 
     @Column
     private String cpf;
-
 }
