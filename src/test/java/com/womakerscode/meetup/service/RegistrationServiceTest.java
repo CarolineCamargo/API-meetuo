@@ -41,10 +41,10 @@ public class RegistrationServiceTest {
     @Test
     @DisplayName("Should save a registration")
     public void saveRegistration(){
-        Registration registration = createValidRegistration();
+        Registration registration = createNewRegistration();
 
-        Mockito.when(repository.existByCpf(Mockito.anyString())).thenReturn(false);
-        Mockito.when(repository.save(registration)).thenReturn(createValidRegistration());
+        Mockito.when(repository.existsByCpf(Mockito.anyString())).thenReturn(false);
+        Mockito.when(repository.save(registration)).thenReturn(createNewRegistration());
         Registration savedRegistration = registrationService.save(registration);
 
         assertThat(savedRegistration.getId()).isEqualTo(101);
@@ -57,8 +57,8 @@ public class RegistrationServiceTest {
     @DisplayName("Should throw business error when thy to save a new registration duplicated")
     public void shouldNotSaveAsRegistrationDuplicated(){
 
-        Registration registration = createValidRegistration();
-        Mockito.when(repository.existByCpf(Mockito.any())).thenReturn(true);
+        Registration registration = createNewRegistration();
+        Mockito.when(repository.existsByCpf(Mockito.any())).thenReturn(true);
 
         Throwable exception = Assertions.catchThrowable(()-> registrationService.save(registration));
         assertThat(exception)
@@ -73,7 +73,7 @@ public class RegistrationServiceTest {
     public void getRegistrationById(){
 
         Integer id = 11;
-        Registration registration = createValidRegistration();
+        Registration registration = createNewRegistration();
         registration.setId(id);
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(registration));
 
@@ -116,7 +116,7 @@ public class RegistrationServiceTest {
         Integer id = 11;
         Registration updatingRegistration = Registration.builder().id(id).build();
 
-        Registration updatedRegistration = createValidRegistration();
+        Registration updatedRegistration = createNewRegistration();
         updatedRegistration.setId(id);
         Mockito.when(repository.save(updatingRegistration)).thenReturn(updatedRegistration);
         Registration registration = registrationService.update(updatingRegistration);
@@ -131,7 +131,7 @@ public class RegistrationServiceTest {
     @DisplayName("Should filter registration must by properties")
     public void findRegistration(){
 
-        Registration registration = createValidRegistration();
+        Registration registration = createNewRegistration();
         Pageable pageRequest = PageRequest.of(0, 10);
         List<Registration> listRegistration = Arrays.asList(registration);
         Page<Registration> page = new PageImpl<>(listRegistration, PageRequest.of(0, 10),1);
@@ -161,7 +161,7 @@ public class RegistrationServiceTest {
         Mockito.verify(repository, Mockito.times(1)).findByCpf(cpf);
     }
 
-    private Registration createValidRegistration() {
+    private Registration createNewRegistration() {
 
         return Registration.builder()
                 .id(101)

@@ -19,7 +19,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     public Registration save(Registration registration) {
-        if (repository.existByCpf(registration.getCpf())){
+        if (repository.existsByCpf(registration.getCpf())){
             throw new BusinessException("Registration already created");
         }
         return repository.save(registration);
