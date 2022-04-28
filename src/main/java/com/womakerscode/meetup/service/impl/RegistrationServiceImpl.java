@@ -1,6 +1,6 @@
 package com.womakerscode.meetup.service.impl;
 
-import com.womakerscode.meetup.exception.BusinessException;
+import com.womakerscode.meetup.controller.exceptions.BusinessException;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.repository.RegistrationRepository;
 import com.womakerscode.meetup.service.RegistrationService;

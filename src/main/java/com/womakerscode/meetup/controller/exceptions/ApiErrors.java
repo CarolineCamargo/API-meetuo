@@ -1,6 +1,5 @@
 package com.womakerscode.meetup.controller.exceptions;
 
-import com.womakerscode.meetup.exception.BusinessException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
 

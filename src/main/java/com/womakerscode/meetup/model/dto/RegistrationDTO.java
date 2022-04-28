@@ -1,4 +1,4 @@
-package com.womakerscode.meetup.model;
+package com.womakerscode.meetup.model.dto;
 
 import lombok.*;
 
