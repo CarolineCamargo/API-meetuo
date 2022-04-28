@@ -25,4 +25,8 @@ public class Registration {
 
     @Column
     private String cpf;
+
+    @JoinColumn
+    @ManyToOne
+    private Meetup meetup;
 }

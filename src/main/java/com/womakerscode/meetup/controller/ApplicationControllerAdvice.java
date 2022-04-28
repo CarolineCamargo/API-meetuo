@@ -1,7 +1,7 @@
 package com.womakerscode.meetup.controller;
 
 import com.womakerscode.meetup.controller.exceptions.ApiErrors;
-import com.womakerscode.meetup.exception.BusinessException;
+import com.womakerscode.meetup.controller.exceptions.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
