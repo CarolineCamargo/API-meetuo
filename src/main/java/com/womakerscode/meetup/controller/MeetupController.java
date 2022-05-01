@@ -16,33 +16,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("/api/meetup")
-@RequiredArgsConstructor //por que aqui tem e no registration não?
+@RequiredArgsConstructor
 public class MeetupController {
 
     private final MeetupService meetupService;
-    private final RegistrationService registrationService;
     private final ModelMapper modelMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private Integer create(@RequestBody MeetupDTO meetupDTO){
+    public MeetupDTO create(@RequestBody @Valid MeetupDTO dto){
 
-        Registration registration = registrationService.getRegistrationByCpf(meetupDTO.getCpf())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-
-        Meetup entity = Meetup.builder()
-                .registration((List<Registration>) registration) //isso ta certo??
-                .meetupName("WoMakersCode Java")
-                .meetupDate("01/06/2022")
-                .build();
-
+        Meetup entity = modelMapper.map(dto, Meetup.class);
         entity = meetupService.save(entity);
-        return entity.getId();
+
+        return modelMapper.map(entity, MeetupDTO.class);
     }
 
     @GetMapping
@@ -54,11 +49,7 @@ public class MeetupController {
                 .getContent()
                 .stream()
                 .map(entity -> {
-                    Registration registration = (Registration) entity.getRegistration(); //isso vai funcionar?
-                    RegistrationDTO registrationDTO = modelMapper.map(registration, RegistrationDTO.class);
-
                     MeetupDTO meetupDTO = modelMapper.map(entity, MeetupDTO.class);
-                    meetupDTO.setRegistrationDTO(registrationDTO);
                     return meetupDTO;
                 }).collect(Collectors.toList());
         return new PageImpl<MeetupDTO>(meetups, pageRequest, result.getTotalElements());

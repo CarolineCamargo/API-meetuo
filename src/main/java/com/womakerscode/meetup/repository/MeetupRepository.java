@@ -12,13 +12,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MeetupRepository extends JpaRepository<Meetup, Integer> {
 
+/*
     @Query(value = " select l from Meetup as l join l.registration as b where b.cpf = :cpf or l.meetupName =:meetupName ")
-    Page<Meetup> findByRegistrationOnMeetup(
+    Page<Meetup> findByCpfOnMeetup(
             @Param("cpf") String cpf,
             @Param("meetupName") String meetupName,
             Pageable pageable
     );
+*/
 
-    Page<Meetup> findByRegistration(Registration registration, Pageable pageable);
-
+    //Page<Meetup> findByRegistration(Registration registration, Pageable pageable);
 }

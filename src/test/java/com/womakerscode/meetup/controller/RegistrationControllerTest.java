@@ -71,13 +71,13 @@ public class RegistrationControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(101))
                 .andExpect(jsonPath("name").value(dto.getName()))
-                .andExpect(jsonPath("dateOfRegistration").value(dto.getDateOfRegistration().toString()))
+                .andExpect(jsonPath("dateOfRegistration").value(dto.getDateOfRegistration()))
                 .andExpect(jsonPath("cpf").value(dto.getCpf()));
 
     }
 
     @Test
-    @DisplayName("Should throw an exception when not have date enough for the test")
+    @DisplayName("Should throw an exception when not have data enough for the test")
     public void createInvalidRegistration() throws Exception{
 
         String json = new ObjectMapper().writeValueAsString(new RegistrationDTO());

@@ -2,6 +2,8 @@ package com.womakerscode.meetup.model.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,9 +12,9 @@ public class MeetupDTO {
 
     private Integer id;
 
-    private String cpf;
+    @NotBlank(message = "O campo nome não pode ser vazio")
+    private String name;
 
-    private String meetupName;
-
-    private RegistrationDTO registrationDTO;
+    @NotBlank(message = "O campo data não pode ser vazio")
+    private String date;
 }

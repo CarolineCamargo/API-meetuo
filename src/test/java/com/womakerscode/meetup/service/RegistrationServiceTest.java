@@ -76,6 +76,7 @@ public class RegistrationServiceTest {
         Registration registration = createNewRegistration();
         registration.setId(id);
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(registration));
+        Mockito.when(repository.existsById(id)).thenReturn(true);
 
         Optional<Registration> foundRegistration = registrationService.getRegistrationById(id);
 
@@ -87,15 +88,18 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Should return empty when get a registration by id and doesn't exists")
+    @DisplayName("Should throw exception when registration doesn't exist")
     public void registrationNotFoundById(){
 
-        Integer id = 11;
-        Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+        Registration registration = createNewRegistration();
+        Mockito.when(repository.existsByCpf(Mockito.any())).thenReturn(true);
 
-        Optional <Registration> registration = registrationService.getRegistrationById(id);
+        Throwable exception = Assertions.catchThrowable(()-> registrationService.getRegistrationById(registration.getId()));
+        assertThat(exception)
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Registration doesn't exist");
 
-        assertThat(registration.isPresent()).isFalse();
+        Mockito.verify(repository, Mockito.never()).findById(registration.getId());
     }
 
     @Test

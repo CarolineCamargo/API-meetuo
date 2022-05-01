@@ -21,13 +21,11 @@ public class MeetupServiceImpl implements MeetupService {
         this.repository = repository;
     }
 
-    // precisa validar se meetup já existe? se sim, usar qual atributo já que não tem um único fora o id
     @Override
     public Meetup save(Meetup meetup){
         return repository.save(meetup);
     }
 
-    //Ana usou variavel "loan" por que? essa validação está certa? é necessária?
     @Override
     public Meetup update(Meetup meetup){
         if (meetup == null || meetup.getId() == null){
@@ -44,11 +42,11 @@ public class MeetupServiceImpl implements MeetupService {
 
     @Override
     public Page<Meetup> find(MeetupFilterDTO meetupFilterDTO, Pageable pageable){
-        return repository.findByRegistrationOnMeetup(meetupFilterDTO.getCpf(), meetupFilterDTO.getMeetupName(), pageable);
+        return null; //repository.findByCpfOnMeetup(meetupFilterDTO.getCpf(), meetupFilterDTO.getMeetupName(), pageable);
     }
-    //ver comentário na interface
+
     @Override
     public Page<Meetup> getRegistrationsByMeetup(List<Registration> registration, Pageable pageable){
-        return repository.findByRegistration((Registration) registration, pageable);
+        return null;//repository.findByRegistration((Registration) registration, pageable);
     }
 }
