@@ -88,21 +88,6 @@ public class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when registration doesn't exist")
-    public void registrationNotFoundById(){
-
-        Registration registration = createNewRegistration();
-        Mockito.when(repository.existsByCpf(Mockito.any())).thenReturn(true);
-
-        Throwable exception = Assertions.catchThrowable(()-> registrationService.getRegistrationById(registration.getId()));
-        assertThat(exception)
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("Registration doesn't exist");
-
-        Mockito.verify(repository, Mockito.never()).findById(registration.getId());
-    }
-
-    @Test
     @DisplayName("Should delete a registration")
     public void deleteRegistration(){
 

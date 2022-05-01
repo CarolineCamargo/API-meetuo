@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class RegistrationControllerTest {
 
-    static String REGISTRATION_API = "/api/registration";
+    static String REGISTRATION_API = "/api/registration/";
 
     @Autowired
     MockMvc mockMvc;
@@ -192,8 +192,7 @@ public class RegistrationControllerTest {
                 .cpf("012345678900")
                 .build();
 
-        BDDMockito.given(registrationService.getRegistrationById(anyInt()))
-                .willReturn(Optional.of(updatingRegistration));
+        BDDMockito.given(registrationService.getRegistrationById(anyInt())).willReturn(Optional.of(updatingRegistration));
 
         Registration updatedRegistration = Registration.builder()
                 .id(id)
@@ -208,14 +207,14 @@ public class RegistrationControllerTest {
                 .put(REGISTRATION_API.concat("/" + 1))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .contentType(json);
+                .content(json);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("name").value(dto.getName()))
                 .andExpect(jsonPath("dateOfRegistration").value(dto.getDateOfRegistration()))
-                .andExpect(jsonPath("cpf").value("012345678900"));
+                .andExpect(jsonPath("cpf").value(dto.getCpf()));
     }
 
     @Test
@@ -230,7 +229,7 @@ public class RegistrationControllerTest {
                 .put(REGISTRATION_API.concat("/" + 1))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .contentType(json);
+                .content(json);
 
         mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
     }

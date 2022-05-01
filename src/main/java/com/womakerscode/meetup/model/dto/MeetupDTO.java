@@ -17,4 +17,6 @@ public class MeetupDTO {
 
     @NotBlank(message = "O campo data não pode ser vazio")
     private String date;
+
+    private boolean activated;
 }

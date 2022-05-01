@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class MeetupControllerTest {
 
-    static String MEETUP_API = "/api/meetup";
+    static String MEETUP_API = "/api/meetup/";
 
     @Autowired
     MockMvc mockMvc;
@@ -58,12 +58,13 @@ public class MeetupControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(1))
                 .andExpect(jsonPath("name").value("WoMakersCode Java"))
-                .andExpect(jsonPath("date").value("01/06/2022"));
+                .andExpect(jsonPath("date").value("01/06/2022"))
+                .andExpect(jsonPath("activated").value(true));
     }
 
     @Test
-    @DisplayName("Should return message when empty")
-    public void meetupNameEmpty() throws Exception {
+    @DisplayName("Should return message when name is empty")
+    public void meetupCreateNameEmpty() throws Exception {
 
         MeetupDTO dto = createNewMeetupDto();
         dto.setName("");
@@ -84,8 +85,8 @@ public class MeetupControllerTest {
     }
 
     @Test
-    @DisplayName("Should return message when empty")
-    public void meetupDateEmpty() throws Exception {
+    @DisplayName("Should return message when date is empty")
+    public void meetupCreateDateEmpty() throws Exception {
 
         MeetupDTO dto = createNewMeetupDto();
         dto.setDate("");
@@ -104,6 +105,77 @@ public class MeetupControllerTest {
                 .andExpect(jsonPath("errors").value("O campo data não pode ser vazio"));
     }
 
+    @Test
+    @DisplayName("Should update a meetup")
+    public void updateMeetup() throws Exception{
+
+        MeetupDTO dto = createUpdatingMeetupDto();
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        Meetup updateMeetup = createNewMeetup();
+
+        BDDMockito.given(meetupService.getMeetupById(anyInt())).willReturn(updateMeetup);
+
+        BDDMockito.given(meetupService.save(updateMeetup)).willReturn(updateMeetup);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put(MEETUP_API)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(dto.getId()))
+                .andExpect(jsonPath("name").value(dto.getName()))
+                .andExpect(jsonPath("date").value(dto.getDate()))
+                .andExpect(jsonPath("activated").value(dto.isActivated()));
+    }
+
+    @Test
+    @DisplayName("Should return message when name is empty")
+    public void meetupUpdateNameEmpty() throws Exception {
+
+        MeetupDTO dto = createUpdatingMeetupDto();
+        dto.setName("");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(MEETUP_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors").value("O campo nome não pode ser vazio"));
+
+    }
+
+    @Test
+    @DisplayName("Should return message when date is empty")
+    public void meetupUpdateDateEmpty() throws Exception {
+
+        MeetupDTO dto = createUpdatingMeetupDto();
+        dto.setDate("");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(MEETUP_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mockMvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors").value("O campo data não pode ser vazio"));
+    }
+
     public MeetupDTO createNewMeetupDto(){
         return MeetupDTO.builder()
                 .id(1)
@@ -112,11 +184,21 @@ public class MeetupControllerTest {
                 .build();
     }
 
+    public MeetupDTO createUpdatingMeetupDto(){
+        return MeetupDTO.builder()
+                .id(1)
+                .name("WoMakersCode")
+                .date("20/06/2022")
+                .activated(false)
+                .build();
+    }
+
     public Meetup createNewMeetup(){
         return Meetup.builder()
                 .id(1)
                 .name("WoMakersCode Java")
                 .date("01/06/2022")
+                .activated(true)
                 .build();
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/registration")
+@RequestMapping("/api/registration/")
 public class RegistrationController {
 
     private RegistrationService registrationService;

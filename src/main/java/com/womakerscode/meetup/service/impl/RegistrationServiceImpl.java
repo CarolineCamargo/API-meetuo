@@ -27,9 +27,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public Optional<Registration> getRegistrationById(Integer id) {
-        if (!repository.existsById(id)){
-            throw new BusinessException("Registration doesn't exist");
-        }
         return this.repository.findById(id);
     }
 
@@ -41,6 +38,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         this.repository.delete(registration);
     }
+
 
     @Override
     public Registration update(Registration registration) {

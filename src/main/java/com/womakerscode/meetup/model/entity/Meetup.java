@@ -21,4 +21,15 @@ public class Meetup {
 
     @Column
     private String date;
+
+    @Column
+    private boolean activated;
+
+    public void active(){
+        this.activated = true;
+    }
+
+
 }
+
+

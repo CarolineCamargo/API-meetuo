@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping ("/api/meetup")
+@RequestMapping ("/api/meetup/")
 @RequiredArgsConstructor
 public class MeetupController {
 
@@ -35,9 +35,23 @@ public class MeetupController {
     public MeetupDTO create(@RequestBody @Valid MeetupDTO dto){
 
         Meetup entity = modelMapper.map(dto, Meetup.class);
+        entity.active();
         entity = meetupService.save(entity);
 
         return modelMapper.map(entity, MeetupDTO.class);
+    }
+
+    @PutMapping
+    public MeetupDTO update(@RequestBody @Valid MeetupDTO dto){
+
+        Meetup meetup = meetupService.getMeetupById(dto.getId());
+        meetup.setName(dto.getName());
+        meetup.setDate(dto.getDate());
+        meetup.setActivated(dto.isActivated());
+
+        meetupService.save(meetup);
+
+        return modelMapper.map(meetup, MeetupDTO.class);
     }
 
     @GetMapping
