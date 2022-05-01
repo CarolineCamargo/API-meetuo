@@ -3,6 +3,7 @@ package com.womakerscode.meetup.controller;
 import com.womakerscode.meetup.model.dto.MeetupDTO;
 import com.womakerscode.meetup.model.entity.Meetup;
 import com.womakerscode.meetup.service.MeetupService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,7 +23,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -174,6 +180,31 @@ public class MeetupControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors").value("O campo data não pode ser vazio"));
+    }
+
+    @Test
+    @DisplayName("Should filter meetup")
+    public void findMeetup() throws Exception{
+
+        MeetupDTO dto = createNewMeetupDto();
+        Meetup meetup = createNewMeetup();
+
+        BDDMockito.given(meetupService.find(any(Meetup.class), any(Pageable.class)))
+                .willReturn(new PageImpl<Meetup>(List.of(meetup), PageRequest.of(0, 100), 1));
+
+        String queryString = String.format("?name=%s&activated=%s&page=0&size=100",
+                meetup.getName(), meetup.isActivated());
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get(MEETUP_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", Matchers.hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(100))
+                .andExpect(jsonPath("pageable.pageNumber").value(0));
     }
 
     public MeetupDTO createNewMeetupDto(){

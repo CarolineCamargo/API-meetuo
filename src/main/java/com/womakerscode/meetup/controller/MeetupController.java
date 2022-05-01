@@ -1,12 +1,8 @@
 package com.womakerscode.meetup.controller;
 
 import com.womakerscode.meetup.model.dto.MeetupDTO;
-import com.womakerscode.meetup.model.dto.MeetupFilterDTO;
-import com.womakerscode.meetup.model.dto.RegistrationDTO;
 import com.womakerscode.meetup.model.entity.Meetup;
-import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.service.MeetupService;
-import com.womakerscode.meetup.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -14,11 +10,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,17 +48,17 @@ public class MeetupController {
     }
 
     @GetMapping
-    public Page<MeetupDTO> find(MeetupFilterDTO filterDTO, Pageable pageRequest){
+    public Page<MeetupDTO> find(MeetupDTO dto, Pageable pageable){
 
-        Page<Meetup> result = meetupService.find(filterDTO, pageRequest);
+        Meetup filter = modelMapper.map(dto, Meetup.class);
+        Page<Meetup> result = meetupService.find(filter, pageable);
 
-        List<MeetupDTO> meetups = result
+        List<MeetupDTO> dtoList = result
                 .getContent()
                 .stream()
-                .map(entity -> {
-                    MeetupDTO meetupDTO = modelMapper.map(entity, MeetupDTO.class);
-                    return meetupDTO;
-                }).collect(Collectors.toList());
-        return new PageImpl<MeetupDTO>(meetups, pageRequest, result.getTotalElements());
+                .map(entity -> modelMapper.map(entity, MeetupDTO.class))
+                .collect(Collectors.toList());
+
+        return new PageImpl<MeetupDTO>(dtoList, pageable, result.getTotalElements());
     }
 }

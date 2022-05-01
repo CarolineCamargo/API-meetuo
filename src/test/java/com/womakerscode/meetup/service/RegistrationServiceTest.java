@@ -15,8 +15,6 @@ import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +74,6 @@ public class RegistrationServiceTest {
         Registration registration = createNewRegistration();
         registration.setId(id);
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(registration));
-        Mockito.when(repository.existsById(id)).thenReturn(true);
 
         Optional<Registration> foundRegistration = registrationService.getRegistrationById(id);
 
@@ -122,7 +119,7 @@ public class RegistrationServiceTest {
 
         Registration registration = createNewRegistration();
         Pageable pageRequest = PageRequest.of(0, 10);
-        List<Registration> listRegistration = Arrays.asList(registration);
+        List<Registration> listRegistration = List.of(registration);
         Page<Registration> page = new PageImpl<>(listRegistration, PageRequest.of(0, 10),1);
 
         Mockito.when(repository.findAll(Mockito.any(Example.class), Mockito.any(PageRequest.class))).thenReturn(page);

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class RegistrationControllerTest {
 
-    static String REGISTRATION_API = "/api/registration/";
+    static String REGISTRATION_API = "/api/registration";
 
     @Autowired
     MockMvc mockMvc;
@@ -248,7 +249,7 @@ public class RegistrationControllerTest {
                 .build();
 
         BDDMockito.given(registrationService.find(any(Registration.class), any(Pageable.class)))
-                .willReturn(new PageImpl<Registration>(Arrays.asList(registration), PageRequest.of(0, 100), 1));
+                .willReturn(new PageImpl<Registration>(List.of(registration), PageRequest.of(0, 100), 1));
 
         String queryString = String.format("?name=%s&dateOfRegistration=%s&page=0&size=100",
                 registration.getName(), registration.getDateOfRegistration());

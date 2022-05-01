@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/registration/")
+@RequestMapping("/api/registration")
 public class RegistrationController {
 
     private RegistrationService registrationService;
@@ -38,7 +38,7 @@ public class RegistrationController {
         return modelMapper.map(entity, RegistrationDTO.class);
     }
 
-    @GetMapping ("{id}")
+    @GetMapping ("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public RegistrationDTO get(@PathVariable Integer id) {
 
@@ -48,7 +48,7 @@ public class RegistrationController {
                 .orElseThrow( ()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping ("{id}")
+    @DeleteMapping ("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete (@PathVariable Integer id) {
         Registration registration = registrationService.getRegistrationById(id)
@@ -57,7 +57,7 @@ public class RegistrationController {
         registrationService.delete(registration);
     }
 
-    @PutMapping ("{id}")
+    @PutMapping ("/{id}")
     public RegistrationDTO update(@PathVariable Integer id, RegistrationDTO registrationDTO){
         return registrationService.getRegistrationById(id)
             .map(registration -> {
