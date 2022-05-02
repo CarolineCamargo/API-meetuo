@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Registration {
 
     @Id
-    @Column
+    @JoinColumn (name = "registration_id")
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -26,7 +26,4 @@ public class Registration {
     @Column
     private String cpf;
 
-    @JoinColumn
-    @ManyToOne
-    private Meetup meetup;
 }

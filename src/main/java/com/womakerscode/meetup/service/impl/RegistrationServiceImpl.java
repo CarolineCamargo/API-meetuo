@@ -7,6 +7,7 @@ import com.womakerscode.meetup.service.RegistrationService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,4 +66,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         return repository.findByCpf(cpf);
     }
 
+    @Override
+    public List<Registration> findAllRegistrationsByIds(List<Integer> ids){
+        return repository.findAllById(ids);
+    }
 }

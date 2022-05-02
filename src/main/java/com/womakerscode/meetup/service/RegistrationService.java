@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,4 +22,6 @@ public interface RegistrationService {
     Page<Registration> find(Registration filter, Pageable pageRequest);
 
     Optional<Registration> getRegistrationByCpf(String cpf);
+
+    List<Registration> findAllRegistrationsByIds(List<Integer> ids);
 }
