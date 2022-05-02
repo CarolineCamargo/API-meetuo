@@ -3,7 +3,6 @@ package com.womakerscode.meetup.controller;
 import com.womakerscode.meetup.model.dto.MeetupDTO;
 import com.womakerscode.meetup.model.entity.Meetup;
 import com.womakerscode.meetup.service.MeetupService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -201,7 +200,7 @@ public class MeetupControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("content", Matchers.hasSize(1)))
+                .andExpect(jsonPath("content", hasSize(1)))
                 .andExpect(jsonPath("totalElements").value(1))
                 .andExpect(jsonPath("pageable.pageSize").value(100))
                 .andExpect(jsonPath("pageable.pageNumber").value(0));

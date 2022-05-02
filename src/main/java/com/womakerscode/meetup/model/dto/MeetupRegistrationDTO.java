@@ -12,5 +12,5 @@ public class MeetupRegistrationDTO {
 
     private MeetupDTO meetupDTO;
 
-    private List<RegistrationDTO> registrations;
+    private List<RegistrationDTO> registrationsDTO;
 }
