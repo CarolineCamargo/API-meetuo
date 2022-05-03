@@ -1,10 +1,12 @@
 package com.womakerscode.meetup.service;
 
+import com.womakerscode.meetup.controller.exceptions.BusinessException;
 import com.womakerscode.meetup.model.entity.Meetup;
 import com.womakerscode.meetup.model.entity.MeetupRegistration;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.repository.MeetupRegistrationRepository;
 import com.womakerscode.meetup.service.impl.MeetupRegistrationServiceImpl;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
@@ -34,19 +38,64 @@ public class MeetupRegistrationServiceTest {
 
     @Test
     @DisplayName("Should save a meetupRegistration")
-    public void saveMeetupRegistration(){
+    public void saveMeetupAllRegistration(){
 
         MeetupRegistration meetupRegistration = createNewMeetupRegistration();
-        List<MeetupRegistration> meetupRegistrationList = Arrays.asList(createNewMeetupRegistration());
+        List<MeetupRegistration> meetupRegistrationList = Arrays.asList(meetupRegistration);
 
         Mockito.when(repository.saveAll(meetupRegistrationList))
-                .thenReturn(Arrays.asList(createNewMeetupRegistration()));
+                .thenReturn(Arrays.asList(meetupRegistration));
         List<MeetupRegistration> savedMeetupRegistration = service.saveAll(meetupRegistrationList);
 
         savedMeetupRegistration.forEach(smr -> {
             assertThat(smr.getId()).isEqualTo(meetupRegistration.getId());
             assertThat(smr.getMeetup()).isEqualTo(meetupRegistration.getMeetup());
             assertThat(smr.getRegistration()).isEqualTo(meetupRegistration.getRegistration());
+        });
+
+        Mockito.verify(repository, Mockito.times(1)).saveAll(savedMeetupRegistration);
+    }
+
+    @Test
+    @DisplayName("Should delete a meetupRegistration")
+    public void deleteAllMeetupRegistration(){
+
+        MeetupRegistration meetupRegistration = createNewMeetupRegistration();
+        List<MeetupRegistration> meetupRegistrationList = Arrays.asList(meetupRegistration);
+
+        assertDoesNotThrow(() -> service.deleteAll(meetupRegistrationList));
+
+        Mockito.verify(repository, Mockito.times(1)).deleteAll(meetupRegistrationList);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when delete a meetupRegistration already was deleted")
+    public void deleteAllMeetupRegistrationAlreadyDeleted(){
+
+        Throwable exception = Assertions.catchThrowable(()-> service.deleteAll(Collections.emptyList()));
+        assertThat(exception)
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("meetupRegistration already was deleted");
+
+        Mockito.verify(repository, Mockito.never()).deleteAll(Collections.emptyList());
+    }
+
+    @Test
+    @DisplayName("Should find meetupRegistration by meetup and registration")
+    public void findByMeetupAndRegistration(){
+
+        Meetup meetup = createNewMeetup();
+        Registration registration = createNewRegistration();
+        MeetupRegistration meetupRegistration = createNewMeetupRegistration();
+        List<MeetupRegistration> meetupRegistrationList = Arrays.asList(meetupRegistration);
+
+        Mockito.when(repository.findByMeetupAndRegistration(meetup, registration)).thenReturn(meetupRegistrationList);
+        List<MeetupRegistration> savedMeetupRegistrationList = service.findByMeetupAndRegistration(meetup, registration);
+
+        savedMeetupRegistrationList.forEach(smr -> {
+            assertThat(smr.getId()).isEqualTo(10);
+            assertThat(smr.getMeetup()).isEqualTo(meetup);
+            assertThat(smr.getRegistration()).isEqualTo(registration);
         });
     }
 

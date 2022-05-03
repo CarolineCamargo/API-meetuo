@@ -1,9 +1,7 @@
 package com.womakerscode.meetup.controller;
 
-import com.womakerscode.meetup.model.dto.MeetupDTO;
-import com.womakerscode.meetup.model.dto.MeetupRegistrationDTO;
-import com.womakerscode.meetup.model.dto.RegistrationDTO;
-import com.womakerscode.meetup.model.dto.RegistrationOnMeetupDTO;
+import com.womakerscode.meetup.controller.exceptions.BusinessException;
+import com.womakerscode.meetup.model.dto.*;
 import com.womakerscode.meetup.model.entity.Meetup;
 import com.womakerscode.meetup.model.entity.MeetupRegistration;
 import com.womakerscode.meetup.model.entity.Registration;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,7 +30,7 @@ public class MeetupRegistrationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private MeetupRegistrationDTO create(@RequestBody @Valid RegistrationOnMeetupDTO dto){
+    public MeetupRegistrationDTO create(@RequestBody @Valid RegistrationOnMeetupDTO dto){
 
         Meetup meetup = meetupService.getMeetupById(dto.getMeetupId());
         List<Registration> registrations = registrationService.findAllRegistrationsByIds(dto.getRegistrationsId());
@@ -45,12 +44,27 @@ public class MeetupRegistrationController {
 
         meetupRegistrationService.saveAll(entities);
 
-        List<RegistrationDTO> registrationDTOs = registrations.stream().map(registration -> modelMapper.map(registration, RegistrationDTO.class)).collect(Collectors.toList());
+        List<RegistrationDTO> registrationDTOs = registrations.stream()
+                .map(registration -> modelMapper.map(registration, RegistrationDTO.class))
+                .collect(Collectors.toList());
 
         return MeetupRegistrationDTO.builder()
                 .meetupDTO(modelMapper.map(meetup, MeetupDTO.class))
                 .registrationsDTO(registrationDTOs)
                 .build();
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@RequestBody @Valid RegistrationMeetupDTO dto){
+
+        Meetup meetup = meetupService.getMeetupById(dto.getMeetupId());
+        Registration registration = registrationService.getRegistrationById(dto.getRegistrationId())
+                .orElseThrow(() -> new BusinessException("Registration not found"));
+
+        List<MeetupRegistration> meetupRegistrationList = meetupRegistrationService.findByMeetupAndRegistration(meetup, registration);
+
+        meetupRegistrationService.deleteAll(meetupRegistrationList);
     }
 
 }

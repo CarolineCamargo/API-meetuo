@@ -36,7 +36,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (registration == null || registration.getId() == null){
             throw new IllegalArgumentException("Id cannot be null");
         }
-
         this.repository.delete(registration);
     }
 

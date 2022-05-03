@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public interface MeetupService {
 
@@ -13,5 +14,4 @@ public interface MeetupService {
     Meetup getMeetupById(Integer id);
 
     Page<Meetup> find(Meetup filter, Pageable pageable);
-
 }
