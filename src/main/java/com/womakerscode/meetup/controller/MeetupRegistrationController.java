@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping ("/api/meetup/registration/connect/")
+@RequestMapping ("/api/meetup/registration/connect")
 public class MeetupRegistrationController {
 
     private final MeetupRegistrationService meetupRegistrationService;
@@ -62,9 +62,26 @@ public class MeetupRegistrationController {
         Registration registration = registrationService.getRegistrationById(dto.getRegistrationId())
                 .orElseThrow(() -> new BusinessException("Registration not found"));
 
-        List<MeetupRegistration> meetupRegistrationList = meetupRegistrationService.findByMeetupAndRegistration(meetup, registration);
+        List<MeetupRegistration> meetupRegistrationList = meetupRegistrationService
+                .findByMeetupAndRegistration(meetup, registration);
 
         meetupRegistrationService.deleteAll(meetupRegistrationList);
     }
 
+    @GetMapping ("/{meetupId}")
+    public MeetupRegistrationDTO findByMeetup(@PathVariable Integer meetupId){
+
+        Meetup meetup = meetupService.getMeetupById(meetupId);
+
+        List<MeetupRegistration> meetupRegistrations = meetupRegistrationService.findByMeetup(meetup);
+
+        List<RegistrationDTO> registrationDTOs = meetupRegistrations.stream()
+                .map(meetupRegistration -> modelMapper.map(meetupRegistration.getRegistration(), RegistrationDTO.class))
+                .collect(Collectors.toList());
+
+        return MeetupRegistrationDTO.builder()
+                .meetupDTO(modelMapper.map(meetup, MeetupDTO.class))
+                .registrationsDTO(registrationDTOs)
+                .build();
+    }
 }

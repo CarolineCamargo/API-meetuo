@@ -44,10 +44,29 @@ public class MeetupRegistrationRepositoryTest {
         });
     }
 
+    @Test
+    @DisplayName("Should find meetupRegistration by meetup")
+    public void findByMeetup(){
+
+        Meetup meetup = entityManager.persist(createNewMeetup());
+        Registration registration = entityManager.persist(createNewRegistration());
+        MeetupRegistration meetupRegistration = entityManager.persist(createNewMeetupRegistration(meetup, registration));
+
+        List<MeetupRegistration> meetupRegistrationList = repository.findByMeetup(meetup);
+
+        meetupRegistrationList.forEach(mrl -> {
+            assertThat(mrl.getId()).isEqualTo(meetupRegistration.getId());
+            assertThat(mrl.getMeetup()).isEqualTo(meetupRegistration.getMeetup());
+            assertThat(mrl.getRegistration()).isEqualTo(meetupRegistration.getRegistration());
+        });
+
+    }
+
     public Meetup createNewMeetup(){
         return Meetup.builder()
                 .name("WoMakersCode Java")
                 .date("01/06/2022")
+                .activated(true)
                 .build();
     }
 

@@ -33,12 +33,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public void delete(Registration registration) {
-        if (registration == null || registration.getId() == null){
-            throw new IllegalArgumentException("Id cannot be null");
-        }
         this.repository.delete(registration);
     }
-
 
     @Override
     public Registration update(Registration registration) {

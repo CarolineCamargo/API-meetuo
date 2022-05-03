@@ -47,11 +47,10 @@ public class MeetupControllerTest {
     public void createMeetup() throws Exception {
 
         MeetupDTO dto = createNewMeetupDto();
-        Meetup savedMeetup = createNewMeetup();
 
-        BDDMockito.given(meetupService.save(any(Meetup.class))).willReturn(savedMeetup);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        BDDMockito.given(meetupService.save(any(Meetup.class))).willReturn(createNewMeetup());
+
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(MEETUP_API)
@@ -61,9 +60,9 @@ public class MeetupControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(1))
-                .andExpect(jsonPath("name").value("WoMakersCode Java"))
-                .andExpect(jsonPath("date").value("01/06/2022"))
+                .andExpect(jsonPath("id").value(dto.getId()))
+                .andExpect(jsonPath("name").value(dto.getName()))
+                .andExpect(jsonPath("date").value(dto.getDate()))
                 .andExpect(jsonPath("activated").value(true));
     }
 
@@ -74,8 +73,7 @@ public class MeetupControllerTest {
         MeetupDTO dto = createNewMeetupDto();
         dto.setName("");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(MEETUP_API)
@@ -96,8 +94,7 @@ public class MeetupControllerTest {
         MeetupDTO dto = createNewMeetupDto();
         dto.setDate("");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(MEETUP_API)
@@ -115,13 +112,11 @@ public class MeetupControllerTest {
     public void updateMeetup() throws Exception{
 
         MeetupDTO dto = createUpdatingMeetupDto();
+        Meetup updateMeetup = createNewMeetup();
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        Meetup updateMeetup = createNewMeetup();
-
         BDDMockito.given(meetupService.getMeetupById(anyInt())).willReturn(updateMeetup);
-
         BDDMockito.given(meetupService.save(updateMeetup)).willReturn(updateMeetup);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -145,8 +140,7 @@ public class MeetupControllerTest {
         MeetupDTO dto = createUpdatingMeetupDto();
         dto.setName("");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(MEETUP_API)
@@ -157,7 +151,6 @@ public class MeetupControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors").value("O campo nome não pode ser vazio"));
-
     }
 
     @Test
@@ -167,8 +160,7 @@ public class MeetupControllerTest {
         MeetupDTO dto = createUpdatingMeetupDto();
         dto.setDate("");
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(MEETUP_API)
@@ -185,7 +177,6 @@ public class MeetupControllerTest {
     @DisplayName("Should filter meetup")
     public void findMeetup() throws Exception{
 
-        MeetupDTO dto = createNewMeetupDto();
         Meetup meetup = createNewMeetup();
 
         BDDMockito.given(meetupService.find(any(Meetup.class), any(Pageable.class)))

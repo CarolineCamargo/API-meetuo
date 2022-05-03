@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface MeetupRegistrationRepository extends JpaRepository <MeetupRegistration, Integer> {
     List<MeetupRegistration> findByMeetupAndRegistration(Meetup meetup, Registration registration);
+
+    List<MeetupRegistration> findByMeetup(Meetup meetup);
 }

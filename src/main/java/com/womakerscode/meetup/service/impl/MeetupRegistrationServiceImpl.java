@@ -35,4 +35,9 @@ public class MeetupRegistrationServiceImpl implements MeetupRegistrationService 
         }
         repository.deleteAll(meetupRegistrationList);
     }
+
+    @Override
+    public List<MeetupRegistration> findByMeetup(Meetup meetup){
+        return repository.findByMeetup(meetup);
+    }
 }

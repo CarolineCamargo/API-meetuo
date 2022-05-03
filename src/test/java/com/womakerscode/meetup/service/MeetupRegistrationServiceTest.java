@@ -99,6 +99,25 @@ public class MeetupRegistrationServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("Should find registrations list by meetup")
+    public void findByMeetup(){
+
+        Meetup meetup = createNewMeetup();
+        Registration registration = createNewRegistration();
+        List<MeetupRegistration> meetupRegistrations = Arrays.asList(createNewMeetupRegistration());
+
+        Mockito.when(repository.findByMeetup(meetup)).thenReturn(meetupRegistrations);
+
+        List<MeetupRegistration> meetupRegistrationList = service.findByMeetup(meetup);
+
+        meetupRegistrationList.forEach(r -> {
+                assertThat(r.getId()).isEqualTo(10);
+                assertThat(r.getMeetup()).isEqualTo(meetup);
+                assertThat(r.getRegistration()).isEqualTo(registration);
+        });
+    }
+
     public Meetup createNewMeetup(){
         return Meetup.builder()
                 .id(1)

@@ -4,7 +4,6 @@ import com.womakerscode.meetup.controller.exceptions.BusinessException;
 import com.womakerscode.meetup.model.dto.RegistrationDTO;
 import com.womakerscode.meetup.model.entity.Registration;
 import com.womakerscode.meetup.service.RegistrationService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,16 +49,11 @@ public class RegistrationControllerTest {
     public void createRegistration() throws Exception{
 
         RegistrationDTO dto = createNewRegistrationDTO();
-        Registration savedRegistration = Registration.builder()
-                .id(101)
-                .name("Caroline")
-                .dateOfRegistration("01/04/2022")
-                .cpf("012345678900")
-                .build();
+        Registration registration = createNewRegistration();
 
-        BDDMockito.given(registrationService.save(any(Registration.class))).willReturn(savedRegistration);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(dto);
+        BDDMockito.given(registrationService.save(any(Registration.class))).willReturn(registration);
+
+        String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(REGISTRATION_API)
@@ -69,7 +63,7 @@ public class RegistrationControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(101))
+                .andExpect(jsonPath("id").value(dto.getId()))
                 .andExpect(jsonPath("name").value(dto.getName()))
                 .andExpect(jsonPath("dateOfRegistration").value(dto.getDateOfRegistration()))
                 .andExpect(jsonPath("cpf").value(dto.getCpf()));
@@ -112,28 +106,22 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    @DisplayName("Should get registration information")
+    @DisplayName("Should get registration")
     public void getRegistration() throws Exception {
 
-        Integer id = 11;
         RegistrationDTO registrationDTO = createNewRegistrationDTO();
-        Registration registration = Registration.builder()
-                .id(id)
-                .name("Caroline")
-                .dateOfRegistration("01/04/2022")
-                .cpf("012345678900")
-                .build();
+        Registration registration = createNewRegistration();
 
-        BDDMockito.given(registrationService.getRegistrationById(id)).willReturn(Optional.of(registration));
+        BDDMockito.given(registrationService.getRegistrationById(registration.getId())).willReturn(Optional.of(registration));
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(REGISTRATION_API.concat("/" + id))
+                .get(REGISTRATION_API.concat("/" + registration.getId()))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(11))
+                .andExpect(jsonPath("id").value(registration.getId()))
                 .andExpect(jsonPath("name").value(registrationDTO.getName()))
-                .andExpect(jsonPath("dateOfRegistration").value(registrationDTO.getDateOfRegistration().toString()))
+                .andExpect(jsonPath("dateOfRegistration").value(registrationDTO.getDateOfRegistration()))
                 .andExpect(jsonPath("cpf").value(registrationDTO.getCpf()));
     }
 
@@ -155,10 +143,10 @@ public class RegistrationControllerTest {
     public void deleteRegistration() throws Exception{
 
         BDDMockito.given(registrationService.getRegistrationById(anyInt()))
-                .willReturn(Optional.of(Registration.builder().id(11).build()));
+                .willReturn(Optional.of(createNewRegistration()));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(REGISTRATION_API.concat("/" + 1))
+                .delete(REGISTRATION_API.concat("/" + 101))
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isNoContent());
@@ -181,26 +169,13 @@ public class RegistrationControllerTest {
     @DisplayName("Should update a registration existing")
     public void updateRegistration() throws Exception {
 
-        Integer id = 11;
         RegistrationDTO dto = createNewRegistrationDTO();
+        Registration updatingRegistration = updatingRegistration();
+        Registration updatedRegistration = createNewRegistration();
+
         String json = new ObjectMapper().writeValueAsString(dto);
 
-        Registration updatingRegistration = Registration.builder()
-                .id(id)
-                .name("Regina")
-                .dateOfRegistration("01/04/2022")
-                .cpf("012345678900")
-                .build();
-
         BDDMockito.given(registrationService.getRegistrationById(anyInt())).willReturn(Optional.of(updatingRegistration));
-
-        Registration updatedRegistration = Registration.builder()
-                .id(id)
-                .name("Caroline")
-                .dateOfRegistration("01/04/2022")
-                .cpf("012345678900")
-                .build();
-
         BDDMockito.given(registrationService.update(updatingRegistration)).willReturn(updatedRegistration);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -211,11 +186,12 @@ public class RegistrationControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("id").value(dto.getId()))
                 .andExpect(jsonPath("name").value(dto.getName()))
                 .andExpect(jsonPath("dateOfRegistration").value(dto.getDateOfRegistration()))
                 .andExpect(jsonPath("cpf").value(dto.getCpf()));
     }
+
 
     @Test
     @DisplayName("Should return resource not found when no registration is found to update")
@@ -238,14 +214,7 @@ public class RegistrationControllerTest {
     @DisplayName("Should filter registration")
     public void findRegistration() throws Exception {
 
-        Integer id = 11;
-        RegistrationDTO dto = createNewRegistrationDTO();
-        Registration registration = Registration.builder()
-                .id(11)
-                .name(dto.getName())
-                .dateOfRegistration(dto.getDateOfRegistration())
-                .cpf(dto.getCpf())
-                .build();
+        Registration registration = createNewRegistration();
 
         BDDMockito.given(registrationService.find(any(Registration.class), any(Pageable.class)))
                 .willReturn(new PageImpl<Registration>(List.of(registration), PageRequest.of(0, 100), 1));
@@ -265,13 +234,29 @@ public class RegistrationControllerTest {
                 .andExpect(jsonPath("pageable.pageNumber").value(0));
     }
 
-
     private RegistrationDTO createNewRegistrationDTO() {
-
         return RegistrationDTO.builder()
                 .id(101)
                 .name("Caroline")
                 .dateOfRegistration("01/04/2022")
+                .cpf("012345678900")
+                .build();
+    }
+
+    private Registration createNewRegistration() {
+        return Registration.builder()
+                .id(101)
+                .name("Caroline")
+                .dateOfRegistration("01/04/2022")
+                .cpf("012345678900")
+                .build();
+    }
+
+    private Registration updatingRegistration() {
+        return Registration.builder()
+                .id(101)
+                .name("Regina")
+                .dateOfRegistration("20/04/2022")
                 .cpf("012345678900")
                 .build();
     }

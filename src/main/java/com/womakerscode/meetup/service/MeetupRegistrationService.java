@@ -14,4 +14,6 @@ public interface MeetupRegistrationService {
     List<MeetupRegistration> findByMeetupAndRegistration(Meetup meetup, Registration registration);
 
     void deleteAll(List<MeetupRegistration> meetupRegistrationList);
+
+    List<MeetupRegistration> findByMeetup(Meetup meetup);
 }
