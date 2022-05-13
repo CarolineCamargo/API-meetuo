@@ -15,4 +15,5 @@ https://bootcamp-java-womakerscode-api-meetup-schedule-service.azurewebsites.net
 - Spring
 - JPA
 - TDD
+- Swagger
 - Azure
